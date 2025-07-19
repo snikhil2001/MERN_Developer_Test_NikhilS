@@ -8,6 +8,7 @@ import {
   GraphQLString,
 } from "graphql";
 import { TaskModel } from "../models/task.model.js";
+import axios from "axios";
 
 const TaskOutputType = new GraphQLObjectType({
   name: "TaskOutput",
@@ -62,20 +63,28 @@ const TaskMutation = new GraphQLObjectType({
       args: {
         id: { type: new GraphQLNonNull(GraphQLID) },
         status: { type: new GraphQLNonNull(GraphQLString) },
+        userId: { type: new GraphQLNonNull(GraphQLString) },
       },
-      resolve: async (_, { id, status }) => {
+      resolve: async (_, { id, status, userId }) => {
         const task = await TaskModel.findByIdAndUpdate(
           id,
           { status },
           { new: true }
         );
 
-        // if (status === "completed") {
-        //   await axios.post("http://localhost:5000/analytics", {
-        //     taskId: id,
-        //     completedAt: new Date(),
-        //   });
-        // }
+        if (status === "completed") {
+          const completedAt = new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " ");
+
+          await axios.post("http://localhost:4001/post-analytics", {
+            taskId: id,
+            status: status,
+            completedAt,
+            userId: userId,
+          });
+        }
 
         return task;
       },

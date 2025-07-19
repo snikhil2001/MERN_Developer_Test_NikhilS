@@ -14,8 +14,8 @@ const GET_TASK = gql`
 `;
 
 const UPDATE_TASK = gql`
-  mutation UpdateTask($id: ID!, $status: String!) {
-    updateTask(id: $id, status: $status) {
+  mutation UpdateTask($id: ID!, $status: String!, $userId: String!) {
+    updateTask(id: $id, status: $status, userId: $userId) {
       id
       status
     }
@@ -28,27 +28,50 @@ export default function TaskDetail() {
   const [updateTask] = useMutation(UPDATE_TASK);
 
   const handleChange = (e: any) => {
-    updateTask({ variables: { id, status: e.target.value } });
+    updateTask({
+      variables: {
+        id,
+        status: e.target.value,
+        userId: Math.floor(Math.random() * 999).toString(),
+      },
+    });
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error getting details of the task</p>;
+  if (loading)
+    return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+  if (error)
+    return (
+      <p className="text-center text-red-500 mt-10">
+        Error getting details of the task
+      </p>
+    );
+
   const task = data.task;
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-2">{task.title}</h1>
-      <p className="mb-4">
-        {task.description ? task.description : "No description provided"}
+    <div className="max-w-xl mx-auto p-6 bg-white border border-gray-200 rounded-lg shadow-md mt-10">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-3">
+        {task.title}
+      </h1>
+      <p className="text-gray-600 mb-6">
+        {task.description || "No description provided"}
       </p>
+
+      <label
+        htmlFor="status"
+        className="block mb-2 text-sm font-medium text-gray-700"
+      >
+        Update Status
+      </label>
       <select
+        id="status"
         value={task.status}
         onChange={handleChange}
-        className="border p-2 rounded"
+        className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
-        <option>pending</option>
-        <option>in-progress</option>
-        <option>completed</option>
+        <option value="pending">Pending</option>
+        <option value="in-progress">In Progress</option>
+        <option value="completed">Completed</option>
       </select>
     </div>
   );
