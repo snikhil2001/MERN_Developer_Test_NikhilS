@@ -9,6 +9,7 @@ import {
 } from "graphql";
 import { TaskModel } from "../models/task.model.js";
 import axios from "axios";
+import redis from "../lib/redis.js";
 
 const TaskOutputType = new GraphQLObjectType({
   name: "TaskOutput",
@@ -35,7 +36,20 @@ const TaskQueries = new GraphQLObjectType({
   fields: {
     tasks: {
       type: new GraphQLList(TaskOutputType),
-      resolve: async () => await TaskModel.find(),
+      resolve: async () => {
+        const cacheKey = "tasks:all";
+
+        const cachedTasks = await redis.get(cacheKey);
+        if (cachedTasks) {
+          return JSON.parse(cachedTasks);
+        }
+
+        const tasks = await TaskModel.find();
+
+        await redis.set(cacheKey, JSON.stringify(tasks), "EX", 60);
+
+        return tasks;
+      },
     },
     task: {
       type: TaskOutputType,

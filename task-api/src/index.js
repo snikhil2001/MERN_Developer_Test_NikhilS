@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
 import { schema } from "./resolvers/taskResolvers.js";
+import redis from "./lib/redis.js";
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,11 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB connected");
+
+    redis.ping().then((res) => {
+      console.log("Redis PING:", res);
+    });
+
     app.listen(4000, () =>
       console.log("Server running on http://localhost:4000/graphql")
     );
