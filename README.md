@@ -214,3 +214,49 @@ Use useQuery hook to call the gql
 Screenshots of the UI are in the below folder
 
 `task-screenshots\task-frontend`
+
+Visit :- [Frontend Url](http://localhost:3000)
+
+# Task Analytics setup and screenshots
+
+Note : I have create a simple seperated express server as a microservice and syncing data between two services through axios.
+
+I have done this because of shortage of time.
+
+We had achieved microservices architecture previously though NestJS and GraphQL and data migration through Apache Kafka.
+
+Navigate to the folder task analytics and run the following
+
+```
+cd ./task-frontend
+npm i
+npm run start
+```
+
+Create a .env file at the root of the folder and add the following variables
+
+```
+PORT=4001
+MYSQL_DB = analyticsdb
+MYSQL_USER = <your user name>
+MYSQL_PASSWORD = <your password>
+MYSQL_HOST = localhost
+```
+
+Database creation commands
+
+`CREATE DATABASE analyticsdb`
+
+```
+CREATE TABLE analytics (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  taskId VARCHAR(255) NOT NULL,
+  userId VARCHAR(255) NOT NULL,
+  status VARCHAR(50) NOT NULL,
+  completedAt DATETIME NOT NULL,
+  createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+Note : Paste this in your MySQL workbench query sheet
