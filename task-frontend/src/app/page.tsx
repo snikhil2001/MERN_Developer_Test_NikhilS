@@ -13,7 +13,9 @@ const GET_TASKS = gql`
 `;
 
 export default function Home() {
-  const { data, loading, error } = useQuery(GET_TASKS);
+  const { data, loading, error } = useQuery(GET_TASKS, {
+    fetchPolicy: "cache-and-network",
+  });
 
   if (loading)
     return <p className="text-center text-gray-500 mt-10">Loading...</p>;

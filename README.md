@@ -260,3 +260,78 @@ CREATE TABLE analytics (
 ```
 
 Note : Paste this in your MySQL workbench query sheet
+
+# Task Optimization
+
+```
+const { data, loading, error } = useQuery(GET_TASKS, {
+    fetchPolicy: "cache-and-network",
+  });
+```
+
+By using cache-and-network and network-only I have seen some changes in the response
+
+On First API call - 271ms
+On Second refresh - 264 ms / 265 ms
+
+Reduced Latency - 20 ms
+
+## Redis setup in task-api
+
+Pre-requisites: Install docker and pull redis image and run the container with that image
+
+Env Variables
+
+```
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
+
+Redis.js file inside lib folder
+
+```
+import Redis from "ioredis";
+
+const redis = new Redis({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+});
+
+redis.on("connect", () => {
+  console.log("Redis connected");
+});
+
+redis.on("error", (err) => {
+  console.error("Redis connection error:", err);
+});
+
+export default redis;
+```
+
+Include in index file
+
+```
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+
+    redis.ping().then((res) => {
+      console.log("Redis PING:", res);
+    });
+
+    app.listen(4000, () =>
+      console.log("Server running on http://localhost:4000/graphql")
+    );
+  })
+  .catch((err) => console.error(err));
+```
+
+Results
+
+Before redis integration - 284 ms
+After redis integration - 14 ms
+
+Screenshots are available in below folder
+
+`task-screenshots\task-optimization`

@@ -25,7 +25,7 @@ const UPDATE_TASK = gql`
 export default function TaskDetail() {
   const { id } = useParams();
   const { data, loading, error } = useQuery(GET_TASK, { variables: { id } });
-  const [updateTask] = useMutation(UPDATE_TASK);
+  const [updateTask, { loading: updateLoading }] = useMutation(UPDATE_TASK);
 
   const handleChange = (e: any) => {
     updateTask({
@@ -37,13 +37,11 @@ export default function TaskDetail() {
     });
   };
 
-  if (loading)
+  if (loading || updateLoading)
     return <p className="text-center text-gray-500 mt-10">Loading...</p>;
   if (error)
     return (
-      <p className="text-center text-red-500 mt-10">
-        Error getting details of the task
-      </p>
+      <p className="text-center text-red-500 mt-10">Error : {error.message}</p>
     );
 
   const task = data.task;
