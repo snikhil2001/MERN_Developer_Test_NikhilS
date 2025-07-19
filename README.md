@@ -146,7 +146,7 @@ Created the NextJS App by the following command
 
 `npx create-next-app@latest task-frontend --app`
 
-For Apollo client integration
+## For Apollo client integration
 
 Installed the dependencies
 
