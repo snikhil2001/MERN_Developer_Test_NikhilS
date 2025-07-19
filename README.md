@@ -20,7 +20,7 @@ Now start the server using the following command
 
 `npm run start`
 
-Visit: [Url](http://localhost:4000)
+Visit: [Url](http://localhost:4000/graphql)
 
 ## Graphql Schema
 
@@ -122,3 +122,89 @@ mutation {
   }
 }
 ```
+
+Screenshots of the ouputs are available in the below folder
+
+`task-screenshots\task-api`
+
+# Task Frontend setup and screenshots
+
+Navigate to the task frontend folder
+
+```
+cd ./task-frontend
+npm i
+```
+
+Run the server by the following command
+
+```
+npm run dev
+```
+
+Created the NextJS App by the following command
+
+`npx create-next-app@latest task-frontend --app`
+
+For Apollo client integration
+
+Installed the dependencies
+
+`npm install @apollo/client graphql`
+
+Created componentes/Providers.tsx for setup
+
+```
+"use client";
+
+import { ApolloProvider } from "@apollo/client";
+import { client } from "@/lib/apollo";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+}
+```
+
+Inside the app layout imported Providers component and wrapped it around
+
+```
+import Providers from "@/components/Provider";
+import "./globals.css";
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+One of the example for query
+
+```
+const GET_TASK = gql`
+  query GetTask($id: ID!) {
+    task(id: $id) {
+      id
+      title
+      description
+      status
+    }
+  }
+`;
+```
+
+Use useQuery hook to call the gql
+
+`const { data, loading, error } = useQuery(GET_TASK, { variables: { id } })`
+
+Screenshots of the UI are in the below folder
+
+`task-screenshots\task-frontend`
