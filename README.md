@@ -152,6 +152,12 @@ Installed the dependencies
 
 `npm install @apollo/client graphql`
 
+Create a .env file at the root of the folder and add the following variables
+
+```
+NEXT_PUBLIC_GRAPHQL_API="http://localhost:4000/graphql"
+```
+
 Created componentes/Providers.tsx for setup
 
 ```
