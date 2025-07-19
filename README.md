@@ -4,6 +4,7 @@
 
 Navigate to task-api folder and install the dependencies
 
-`cd task-api`
-
-`npm i`
+```
+cd task-api
+npm i
+```
